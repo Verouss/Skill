@@ -1,0 +1,98 @@
+{
+  "skill_name": "weekly-report-attribution",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "周报出来了帮我看看，文件是 evals/files/印尼经分周报_20260517.csv，Log 在 evals/files/5月各部门调整Log.txt。这周数据怎么回事，为什么首贷放款额下降了这么多？",
+      "expected_output": "输出包含首贷放款额环比下降12%的结论，并准确指出原因是5月19日风控上线了XX拦截策略",
+      "files": ["evals/files/印尼经分周报_20260517.csv", "evals/files/5月各部门调整Log.txt"],
+      "expectations": [
+        {"text": "报告开头即给出首贷放款额环比下降的具体百分比数据", "description": "确认首句就给出核心结论"},
+        {"text": "首贷放款额下降归因明确关联Log中5月19日的风控拦截策略事件", "description": "归因引用了Log中的具体日期和事件"},
+        {"text": "归因逻辑完整闭合：策略上线→审批门槛提高→放款额下降", "description": "因果链完整"},
+        {"text": "结论先行格式：每个板块第一句给出核心判断", "description": "遵循结论先行"},
+        {"text": "归因链条标注了置信度等级（🔵/🟡/🔴）", "description": "有置信度标签"}
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "这周数据怎么样，帮我看看。周报在 evals/files/印尼经分周报_20260517_incomplete.csv，Log 在 evals/files/5月各部门调整Log.txt。我感觉数据有点不对劲，你仔细检查一下。",
+      "expected_output": "先执行数据质量检查，识别非完整周数据和空值问题，然后基于有效数据做有限分析",
+      "files": ["evals/files/印尼经分周报_20260517_incomplete.csv", "evals/files/5月各部门调整Log.txt"],
+      "expectations": [
+        {"text": "识别出最新周数据截至周四（5/17），标注非完整周", "description": "检查是否发现了数据只到周四而非完整周"},
+        {"text": "在报告开头标注数据完整性状态", "description": "报告顶部有数据完整性声明"},
+        {"text": "识别首贷放款金额的空值问题并标注异常值", "description": "首贷放款合同金额为空值被识别"},
+        {"text": "环比比较时做了口径调整说明（非完整周 vs 完整周）", "description": "环比时注明非完整周口径差异"},
+        {"text": "未编造首贷放款金额的数值", "description": "没有虚构缺失的数据"},
+        {"text": "仍基于Log和其他有效数据做了合理分析", "description": "在数据不完整情况下仍然完成了分析"}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "帮我分析这周的周报数据，文件在 evals/files/印尼经分周报_20260517_adelay.csv，Log 在 evals/files/5月各部门调整Log_adelay.txt。进件量跌得有点多，我想知道原因。",
+      "expected_output": "将本周进件量下降归因到前期的投放缩量（投放延迟效应），而非本周的风控调整",
+      "files": ["evals/files/印尼经分周报_20260517_adelay.csv", "evals/files/5月各部门调整Log_adelay.txt"],
+      "expectations": [
+        {"text": "进件量下降归因于前期的投放缩量（投放延迟效应），约滞后2周", "description": "正确识别延迟效应，关联到W1的投放缩量"},
+        {"text": "排除本周风控调整作为进件量下降的主因，正确区分进件量 vs 通过率的影响路径", "description": "风控主要影响通过率而非进件量"},
+        {"text": "报告中注明延迟窗口的具体说明（如滞后约X周）", "description": "包含延迟窗口的描述"},
+        {"text": "关联具体的Log日期和事件", "description": "引用了Log中的具体内容"},
+        {"text": "归因逻辑链条闭合（投放缩量→曝光↓→进件↓）", "description": "因果关系自洽完整"}
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "看看这周的周报数据，evals/files/印尼经分周报_20260531.csv，Log 在 evals/files/5月各部门调整Log_month_end.txt。用信率跌了一些，件均也涨了点，帮我分析一下什么原因。",
+      "expected_output": "识别用信率下降和件均上浮属于月末周期性波动而非策略调整",
+      "files": ["evals/files/印尼经分周报_20260531.csv", "evals/files/5月各部门调整Log_month_end.txt"],
+      "expectations": [
+        {"text": "识别当前周在月份中的位置（月末5/25-5/31）", "description": "判断数据处于月末时段"},
+        {"text": "将用信率下降归类为周期性波动而非策略归因", "description": "正确归因于月末效应而非策略调整"},
+        {"text": "报告包含周期性修正说明板块", "description": "有专门的周期性说明"},
+        {"text": "未误判不存在的事项为归因", "description": "没有编造Log中不存在的策略事项"},
+        {"text": "件均上浮被正确归类为月末正常效应", "description": "件均上浮归因于月末效应"}
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "这周数据变化挺大的，帮我好好分析一下。周报在 evals/files/印尼经分周报_20260512_multifactor.csv，Log 在 evals/files/5月各部门调整Log_multifactor.txt。首贷通过率降了不少，但复贷率反而上去了，我想知道各自的原因。",
+      "expected_output": "采用多因素叠加归因法分层分析：首贷归因于风控调整，复贷归因于运营活动",
+      "files": ["evals/files/印尼经分周报_20260512_multifactor.csv", "evals/files/5月各部门调整Log_multifactor.txt"],
+      "expectations": [
+        {"text": "区分首贷和复贷的不同归因路径（分层归因）", "description": "首贷和复贷分别独立归因"},
+        {"text": "利用交叉验证（通过率↓+FPD↓一致性）验证风控收紧判断", "description": "通过多个指标联动验证"},
+        {"text": "首贷归因正确对应到风控，复贷归因正确对应到运营", "description": "归因匹配到正确的策略维度"},
+        {"text": "每条归因标注了置信度等级", "description": "每个归因链都有置信度标签"},
+        {"text": "避免了单一归因的错误（将所有变化归因于一个调整事项）", "description": "区分了不同维度的影响"}
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "这周没有记录调整事项，你看看怎么回事。周报在 evals/files/印尼经分周报_20260517_nolog.csv。",
+      "expected_output": "如实告知无Log，基于数据做合理推断，标注低置信度",
+      "files": ["evals/files/印尼经分周报_20260517_nolog.csv"],
+      "expectations": [
+        {"text": "明确告知用户Log缺失，不隐瞒", "description": "诚实说明无Log可用"},
+        {"text": "在报告中标注未获取Log", "description": "报告中有未获取Log声明"},
+        {"text": "每条归因标注了🔴低置信度", "description": "因无Log置信度应为低"},
+        {"text": "推断逻辑合理，基于数据趋势而非凭空猜测", "description": "推断有数据支撑"},
+        {"text": "包含待确认事项部分建议人工核查", "description": "有后续建议"},
+        {"text": "未编造具体的策略日期或事件", "description": "没有虚构Log内容"}
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "帮我分析一下这周的周报趋势，文件在 evals/files/印尼经分周报_20260607_trend.csv，Log 在 evals/files/5月各部门调整Log_trend.txt。复贷率好像一直在涨，虽然每周涨得不多，但我想知道怎么回事。",
+      "expected_output": "识别出复贷率连续多周同向上升的趋势性变化，与W3上线的运营活动关联",
+      "files": ["evals/files/印尼经分周报_20260607_trend.csv", "evals/files/5月各部门调整Log_trend.txt"],
+      "expectations": [
+        {"text": "识别复贷率连续多周同向上升的趋势", "description": "发现趋势性异动而非仅关注单周阈值"},
+        {"text": "将趋势性异动与Log中的运营活动关联", "description": "关联到W3的复贷激励活动"},
+        {"text": "判断了策略的持续有效性而不只是单周归因", "description": "评估策略的持续影响"},
+        {"text": "遵循结论先行格式", "description": "结论放在每段开头"},
+        {"text": "归因逻辑标注了置信度", "description": "有置信度标签"}
+      ]
+    }
+  ]
+}
